@@ -1,0 +1,104 @@
+.mainlogin {
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow-x: hidden;
+  background: linear-gradient(to right, #9d7e69 50%, rgb(255, 255, 255) 50%);
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+}
+
+.loginContainer {
+  height: 75vh;
+  width: 80%;
+  background: linear-gradient(
+    to right bottom,
+    rgba(236, 236, 236, 0.7),
+    rgba(236, 236, 236, 0.4)
+  );
+  border-radius: 1rem;
+  margin: 2rem auto;
+  box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.leftSide,
+.rightSide {
+  margin: 2rem 2rem;
+  box-shadow: 0.5rem 0.5rem 2rem -1rem rgb(58, 57, 57);
+  height: 80%;
+  width: 100%;
+}
+
+.rightSide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rightSide input {
+  display: block;
+  outline: none;
+  border: none;
+  height: 2rem;
+  width: 100%;
+  width: 70%;
+  margin: auto;
+  margin-bottom: 1.5rem;
+  padding: 0.2rem 1rem;
+  transition: all 0.3 ease;
+}
+
+.rightSide label {
+  display: block;
+  text-align: left;
+  width: 78%;
+  margin: auto;
+  font-size: small;
+  color: grey;
+  margin-bottom: 0.5rem;
+}
+
+.rightSide input:hover {
+  box-shadow: 2px 2px 6px -1px #9d7e69;
+}
+
+.rightSide #btnLogin {
+  width: 80%;
+  background-color: #9d7e69;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: all 0.5 ease;
+}
+
+.rightSide #btnLogin:hover {
+  box-shadow: 0.5px 0.5px 6px -1px black;
+  transform: translateY(-2px);
+}
+
+.linkRegister {
+  color: #9d7e69;
+  text-decoration: none;
+}
+
+.leftSide {
+  display: flex;
+  flex-direction: column;
+}
+
+img {
+  height: 100%;
+  width: 60%;
+  object-fit: cover;
+  margin: 0rem auto;
+}
+
+.welcomeNote {
+  float: left;
+  margin-left: 1rem;
+  color: #9d7e69;
+}
