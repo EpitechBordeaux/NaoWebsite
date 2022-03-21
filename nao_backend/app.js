@@ -1,5 +1,4 @@
 const express = require("express");
-const bcryptjs = require("bcrypt");
 const dotenv = require("dotenv");
 var bodyParser = require("body-parser");
 dotenv.config({ path: "./.env" });
@@ -7,8 +6,17 @@ const db = require("./dbConnection");
 
 const app = express();
 const userRoute = require("./routes/user");
+const userCards = require("./routes/cards");
 const cors = require("cors");
-app.use(cors());
+
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 db.connect((error) => {
   if (error) {
     console.log(error);
@@ -22,32 +30,9 @@ app.get("/", (req, res) => {
 });
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/user", userRoute);
-
-app.use(bodyParser.json());
-app.post("/login", (req, res) => {
-  const user = req.body.username;
-  const password = req.body.password;
-  const sqlSearch = "Select * from users where username = ?";
-  const search_query = db.format(sqlSearch, [user]);
-
-  db.query(search_query, async (err, result) => {
-    if (err) throw err;
-    if (result.length == 0) {
-      console.log("--------> User does not exist");
-      res.sendStatus(404);
-    } else {
-      const hashedPassword = result[0].password;
-      if (await bcryptjs.compare(password, hashedPassword)) {
-        console.log("---------> Login Successful");
-        res.send(`${user} is logged in!`);
-      } else {
-        console.log("---------> Password Incorrect");
-        res.send("Password incorrect!");
-      }
-    }
-  });
-});
+app.use("/cards", userCards);
 
 app.listen(5001, () => {
   console.log("Server started on port 5001");

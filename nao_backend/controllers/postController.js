@@ -1,5 +1,4 @@
 const Validator = require("fastest-validator");
-const models = require("../models");
 
 function save(req, res) {
   const post = {

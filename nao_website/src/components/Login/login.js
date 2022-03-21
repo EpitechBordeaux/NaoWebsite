@@ -1,15 +1,30 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./login.css";
-import { Form, Button } from "react-bootstrap";
 import logo from "../../images/nao_logo.png";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  console.log(email);
+  console.log(password);
+
+  const data = {
+    username: "fuck",
+    email: "fuck@camille",
+    password: "cam",
+  };
+
+  function handleSubmit() {
+    fetch("http://localhost:5001/user/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.error(err));
   }
 
   return (
@@ -25,25 +40,27 @@ function Login() {
             <h2>Welcome back</h2>
           </div>
           <form onSubmit={handleSubmit}>
-            <label for="inputEmail">Email</label>
+            <label>Email</label>
             <input
               type="text"
-              class="form-control"
               id="inputEmail"
               placeholder="email@example.com"
+              onChange={(newValue) => setEmail(newValue.target.value)}
               value={email}
-              onChange={(newValue) => setEmail(newValue)}
             />
-            <label for="inputPassword">Password</label>
+            <label>Password</label>
             <input
               type="password"
-              class="form-control"
               id="inputPassword"
-              placeholder="Password"
+              placeholder="password"
               value={password}
-              onChange={(newValue) => setPassword(newValue)}
+              onChange={(newValue) => setPassword(newValue.target.value)}
             />
-            <button type="submit" id="btnLogin" class="btn btn-primary mb-2">
+            <button
+              type="submit"
+              id="btnLogin"
+              className="btn btn-primary mb-2"
+            >
               Login
             </button>
           </form>
