@@ -1,5 +1,4 @@
 const bcryptjs = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const db = require("../dbConnection");
 
 async function signIn(req, res) {
@@ -17,8 +16,6 @@ async function signIn(req, res) {
 
   db.query(search_query, async (err, result) => {
     if (err) throw err;
-    console.log("------> Search Results");
-    console.log(result.length);
     if (result.length != 0) {
       console.log("------> User already exists");
       res.status(409).json({ error: "User already exists" });
@@ -26,10 +23,10 @@ async function signIn(req, res) {
       db.query(sqlInsert, (err, result) => {
         if (err) {
           console.log("Error creating user");
-          res.status(500).json({});
+          res.status(500).json({ error: "Error creating user" });
         } else {
           console.log("--------> Created new User");
-          res.status(201).json({});
+          res.status(201).json({ result: "Created new User" });
         }
       });
     }

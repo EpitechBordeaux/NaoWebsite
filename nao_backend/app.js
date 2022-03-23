@@ -7,6 +7,8 @@ const db = require("./dbConnection");
 const app = express();
 const userRoute = require("./routes/user");
 const userCards = require("./routes/cards");
+const userGroups = require("./routes/groups");
+const userOrganizations = require("./routes/organizations");
 const cors = require("cors");
 
 app.use(
@@ -32,7 +34,9 @@ app.get("/", (req, res) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/user", userRoute);
+app.use("/groups", userGroups);
 app.use("/cards", userCards);
+app.use("/organizations", userOrganizations);
 
 app.listen(5001, () => {
   console.log("Server started on port 5001");
