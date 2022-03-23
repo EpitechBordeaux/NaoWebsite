@@ -42,43 +42,43 @@ router.post("/addOrganization", (req, res) => {
         } else {
           console.log("--------> Created new Orga");
 
-          let tableName = users.tableName;
-          let query = `CREATE TABLE ${tableName} (id INT AUTO_INCREMENT PRIMARY KEY, userId INT, OrganizationId INT, CONSTRAINT ForeignKeyOrganizations FOREIGN KEY (OrganizationId) REFERENCES organizations (id), CONSTRAINT ForeignKeyOrganizationsUser FOREIGN KEY (userId) REFERENCES users (id))`;
+          // let tableName = users.tableName;
+          // let query = `CREATE TABLE ${tableName} (id INT AUTO_INCREMENT PRIMARY KEY, userId INT, OrganizationId INT, CONSTRAINT ForeignKeyOrganizations FOREIGN KEY (OrganizationId) REFERENCES organizations (id), CONSTRAINT ForeignKeyOrganizationsUser FOREIGN KEY (userId) REFERENCES users (id))`;
 
-          db.query(query, (err, rows) => {
-            if (err) {
-              console.log("Table Creation Failed");
-              console.log(err);
-              return res.status(500).send("Table Creation Failed");
-            } else {
-              console.log(`Successfully Created Table - ${tableName}`);
-              return res.send(`Successfully Created Table - ${tableName}`);
-            }
-          });
+          // db.query(query, (err, rows) => {
+          //   if (err) {
+          //     console.log("Table Creation Failed");
+          //     console.log(err);
+          //     return res.status(500).send("Table Creation Failed");
+          //   } else {
+          //     console.log(`Successfully Created Table - ${tableName}`);
+          return res.send(`Created new Orga - ${tableName}`);
+          //   }
+          // });
         }
       });
     }
   });
 });
 
-router.post("/addUser/:name", (req, res) => {
-  const name = req.params.name;
-
-  const sqlSearch_userId = `SELECT * FROM ${name} WHERE userId = ?`;
-  const search_query_id = db.format(sqlSearch_userId, [req.body.userId]);
+router.post("/addUser", (req, res) => {
+  const sqlSearch_userId = `SELECT * FROM usersOrganizations WHERE userId = ? AND organizationId = ?`;
+  const search_query_id = db.format(sqlSearch_userId, [
+    req.body.userId,
+    req.body.organizationId,
+  ]);
   const users = {
     userId: req.body.userId,
-    OrganizationId: req.body.OrganizationId,
+    organizationId: req.body.organizationId,
   };
   const sqlInsert =
-    "INSERT INTO " +
-    name +
-    " (id, userId, OrganizationId) VALUES (null, " +
+    "INSERT INTO usersOrganizations (userId, organizationId) VALUES (" +
     users.userId +
     ", " +
-    users.OrganizationId +
+    users.organizationId +
     ")";
-
+  console.log(search_query_id);
+  console.log(sqlInsert);
   db.query(search_query_id, async (err, result) => {
     if (err) throw err;
     if (result.length != 0) {
@@ -98,12 +98,50 @@ router.post("/addUser/:name", (req, res) => {
   });
 });
 
-router.get("/getUser/:name", (request, res) => {
-  const name = request.params.name;
-
-  db.query(`SELECT * FROM ${name}`, (error, result) => {
+router.get("/getUser/:id", (request, res) => {
+  const id = request.params.id;
+  const sqlSearch_userId = `SELECT * FROM usersOrganizations WHERE organizationId = ?`;
+  const search_query_id = db.format(sqlSearch_userId, [id]);
+  db.query(search_query_id, (error, result) => {
     if (error) throw error;
     res.send(result);
+  });
+});
+
+router.delete("/delete/user/", (req, res) => {
+  const sqlSearch_userId = `SELECT * FROM usersOrganizations WHERE userId = ? AND organizationId = ?`;
+  const search_query_id = db.format(sqlSearch_userId, [
+    req.body.userId,
+    req.body.organizationId,
+  ]);
+  const users = {
+    userId: req.body.userId,
+    organizationId: req.body.organizationId,
+  };
+  const select =
+    "DELETE FROM `usersOrganizations` WHERE userId = '" +
+    users.userId +
+    "' AND organizationId = '" +
+    users.organizationId +
+    "'";
+
+  console.log(select);
+  db.query(search_query_id, async (err, result) => {
+    if (err) throw err;
+    if (result.length != 0) {
+      db.query(select, (err, result) => {
+        if (err) {
+          console.log("Error deleted User");
+          res.status(500).json({});
+        } else {
+          console.log("--------> Deleted User");
+          res.status(201).json({});
+        }
+      });
+    } else {
+      console.log("------> User dosn't exists");
+      res.status(409).json({ error: "User dosn't exists" });
+    }
   });
 });
 
