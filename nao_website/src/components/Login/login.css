@@ -1,5 +1,8 @@
 .mainlogin {
   background: "#EEEEEE";
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .loginContainer {
@@ -27,6 +30,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .rightSide input {
@@ -47,7 +53,7 @@
   text-align: left;
   margin: auto;
   font-size: small;
-  color: grey;
+  color: #398ab9;
   margin-bottom: 0.5rem;
 }
 
@@ -57,12 +63,24 @@
 
 .rightSide #btnLogin {
   width: 60%;
-  background-color: #9d7e69;
+  background-color: #398ab9;
   color: white;
   border: none;
   cursor: pointer;
   padding: 0.5rem 1rem;
   transition: all 0.5 ease;
+}
+
+.btnConnexion {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .rightSide #btnLogin:hover {
@@ -71,13 +89,8 @@
 }
 
 .linkRegister {
-  color: #9d7e69;
+  color: #398ab9;
   text-decoration: none;
-}
-
-.leftSide {
-  display: flex;
-  flex-direction: column;
 }
 
 img {
@@ -90,5 +103,8 @@ img {
 .welcomeNote {
   float: left;
   margin-left: 1rem;
-  color: #9d7e69;
+  color: #398ab9;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }

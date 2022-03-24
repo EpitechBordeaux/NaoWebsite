@@ -54,7 +54,7 @@ function SignIn() {
               <label>Email</label>
               <input
                 type="text"
-                id="inputEmail"
+                id="inputUsername"
                 placeholder="email@epitech.eu"
                 onChange={(newValue) => setEmail(newValue.target.value)}
                 value={email}
@@ -67,13 +67,15 @@ function SignIn() {
                 value={password}
                 onChange={(newValue) => setPassword(newValue.target.value)}
               />
-              <button
-                type="submit"
-                id="btnLogin"
-                className="btn btn-primary mb-4 mt-4"
-              >
-                Connexion
-              </button>
+              <div className="btnConnexionSignIn">
+                <button
+                  type="submit"
+                  id="btnLogin"
+                  className="btn btn-primary mb-4 mt-4"
+                >
+                  Connexion
+                </button>
+              </div>
             </form>
             <footer className="footer">
               <h4>

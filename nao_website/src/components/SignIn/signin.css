@@ -62,12 +62,12 @@
 }
 
 .rightSide input:hover {
-  box-shadow: 2px 2px 6px -1px #9d7e69;
+  box-shadow: 2px 2px 6px -1px #398ab9;
 }
 
 .rightSide #btnLogin {
   width: 80%;
-  background-color: #9d7e69;
+  background-color: #398ab9;
   color: white;
   border: none;
   cursor: pointer;
@@ -81,13 +81,18 @@
 }
 
 .linkRegister {
-  color: #9d7e69;
+  color: #398ab9;
   text-decoration: none;
 }
 
 .leftSide {
   display: flex;
   flex-direction: column;
+}
+.btnConnexionSignIn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 img {
@@ -100,5 +105,5 @@ img {
 .welcomeNote {
   float: left;
   margin-left: 1rem;
-  color: #9d7e69;
+  color: #398ab9;
 }

@@ -2,8 +2,19 @@ const express = require("express");
 const router = express.Router();
 const db = require("../dbConnection");
 
-router.get("/", (request, res) => {
+router.get("/", (req, res) => {
   db.query(`SELECT * FROM organizations`, (error, result) => {
+    if (error) throw error;
+    res.send(result);
+  });
+});
+
+router.get("/:name", (req, res) => {
+  const name = req.params.name;
+  const sqlSearch_userId = `SELECT * FROM organizations WHERE organizationName = ?`;
+  const search_query_id = db.format(sqlSearch_userId, [name]);
+
+  db.query(search_query_id, (error, result) => {
     if (error) throw error;
     res.send(result);
   });
@@ -20,14 +31,11 @@ router.post("/addOrganization", (req, res) => {
     tableName: req.body.tableName,
   };
   const sqlInsert =
-    "INSERT INTO `organizations` (id, organizationName, tableName) VALUES (null, '" +
+    "INSERT INTO `organizations` (id, organizationName) VALUES (null, '" +
     users.organizationName +
-    "', " +
-    "'" +
-    users.tableName +
-    "'" +
-    ")";
+    "')";
 
+  console.log(sqlInsert);
   db.query(search_query_name, async (err, result) => {
     if (err) throw err;
     if (result.length != 0) {
@@ -41,20 +49,7 @@ router.post("/addOrganization", (req, res) => {
           res.status(500).json({ error: "Error creating Orga" });
         } else {
           console.log("--------> Created new Orga");
-
-          // let tableName = users.tableName;
-          // let query = `CREATE TABLE ${tableName} (id INT AUTO_INCREMENT PRIMARY KEY, userId INT, OrganizationId INT, CONSTRAINT ForeignKeyOrganizations FOREIGN KEY (OrganizationId) REFERENCES organizations (id), CONSTRAINT ForeignKeyOrganizationsUser FOREIGN KEY (userId) REFERENCES users (id))`;
-
-          // db.query(query, (err, rows) => {
-          //   if (err) {
-          //     console.log("Table Creation Failed");
-          //     console.log(err);
-          //     return res.status(500).send("Table Creation Failed");
-          //   } else {
-          //     console.log(`Successfully Created Table - ${tableName}`);
-          return res.send(`Created new Orga - ${tableName}`);
-          //   }
-          // });
+          return res.send({ organizationName: users.organizationName });
         }
       });
     }

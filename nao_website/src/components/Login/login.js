@@ -77,13 +77,15 @@ function Login() {
                 value={password}
                 onChange={(newValue) => setPassword(newValue.target.value)}
               />
-              <button
-                type="submit"
-                id="btnLogin"
-                className="btn btn-primary mb-4 mt-4"
-              >
-                Connexion
-              </button>
+              <div className="btnConnexion">
+                <button
+                  type="submit"
+                  id="btnLogin"
+                  className="btn btn-primary mb-4 mt-4"
+                >
+                  Connexion
+                </button>
+              </div>
             </form>
             <footer className="footer">
               <h4>

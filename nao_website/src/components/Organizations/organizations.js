@@ -48,11 +48,65 @@ function Organizations() {
     }
   }, [currentOrganization]);
 
+  const addUser = (id) => {
+    const data = {
+      userId: context.userId,
+      organizationId: id[0].id,
+      organizationName: id[0].organizationName,
+    };
+    fetch("http://localhost:5001/organizations/addUser", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const findOrganizationId = (name) => {
+    console.log("http://localhost:5001/organizations/" + name);
+    fetch("http://localhost:5001/organizations/" + name, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        addUser(data);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const createOrganisation = () => {
+    const data = {
+      organizationName: "Adapei",
+    };
+
+    fetch("http://localhost:5001/organizations/addOrganization", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.organizationName);
+        findOrganizationId(data.organizationName);
+      })
+      .catch((err) => console.error(err));
+  };
+
   return (
     <>
       <MyNavbar />
-
-      <div div className="container">
+      <div div className="containerOrganization">
         <div className="headerBtn">
           <Dropdown onClick={getAllOrganization} className="dropdownButton">
             <Dropdown.Toggle variant="secondary" id="dropdown-basic">
@@ -73,7 +127,10 @@ function Organizations() {
                   {element.organizationName}
                 </Dropdown.Item>
               ))}
-              <Dropdown.Item href="#/action-2">
+              <Dropdown.Item
+                href="#/action-2"
+                onClick={() => createOrganisation()}
+              >
                 Créer une organisation
               </Dropdown.Item>
             </Dropdown.Menu>
