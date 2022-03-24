@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Container, Nav, Dropdown, Button } from "react-bootstrap";
+import { Dropdown, Button } from "react-bootstrap";
+import { MyContext } from "../../context/context";
+import MyNavbar from "../Navbar/navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./organization.css";
 
@@ -10,13 +12,17 @@ function Organizations() {
     -1,
     "Choisis une organisation",
   ]);
+  const context = React.useContext(MyContext);
 
   const getAllOrganization = (event) => {
     event.preventDefault();
-    fetch("http://localhost:5001/organizations/", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    })
+    fetch(
+      "http://localhost:5001/organizations/userOrganisation/" + context.userId,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }
+    )
       .then((response) => {
         return response.json();
       })
@@ -43,22 +49,8 @@ function Organizations() {
   }, [currentOrganization]);
 
   return (
-    <div>
-      <Navbar bg="primary" variant="dark">
-        <Container>
-          <Navbar.Brand href="nao" path="/">
-            Générateur de cartes
-          </Navbar.Brand>
-          <Nav className="justify-content-end flex-grow-1 pe-3">
-            <Nav.Link href="nao">Nao</Nav.Link>
-            <Nav.Link href="#groups">Organizations</Nav.Link>
-            <Nav.Link href="#cards">Cartes</Nav.Link>
-            <Nav.Link href="login" path="/login">
-              Se connecter
-            </Nav.Link>
-          </Nav>
-        </Container>
-      </Navbar>
+    <>
+      <MyNavbar />
 
       <div div className="container">
         <div className="headerBtn">
@@ -67,13 +59,13 @@ function Organizations() {
               {currentOrganization[1]}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              {organisations.map((element) => (
+              {organisations.map((element, key) => (
                 <Dropdown.Item
+                  key={key}
                   href="#/action-2"
-                  key={element.id}
                   onClick={() =>
                     setCurrentOrganization([
-                      element.id,
+                      element.organizationId,
                       element.organizationName,
                     ])
                   }
@@ -93,12 +85,14 @@ function Organizations() {
         <div className="groupsContent">
           <div className="groups">
             {groups.map((element) => (
-              <h4 className="groupeName">{element.name}</h4>
+              <h4 key={element.id} className="groupeName">
+                {element.name}
+              </h4>
             ))}
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

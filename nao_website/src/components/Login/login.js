@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../../images/nao_logo.jpg";
 import { useNavigate } from "react-router-dom";
-import { Navbar, Container, Nav } from "react-bootstrap";
+import { MyContext } from "../../context/context";
+import MyNavbar from "../Navbar/navbar";
 import "./login.css";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [currentUser, setCurrentUser] = useState("");
   const navigate = useNavigate();
+  const context = useContext(MyContext);
   const data = {
     username: username,
     password: password,
@@ -22,32 +24,35 @@ function Login() {
       body: JSON.stringify(data),
     })
       .then((response) => {
-        if (response.status === 200) {
-          navigate("/");
-        }
-        console.log(response.status);
+        return response.json();
       })
-      .then((data) => console.log(data))
+      .then((data) => {
+        context.setUserName(data.userName);
+        setCurrentUser(data.userName);
+      })
       .catch((err) => console.error(err));
   }
 
+  useEffect(() => {
+    if (currentUser !== "") {
+      fetch("http://localhost:5001/user/" + currentUser, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          context.setUserId(data[0].id);
+          navigate("/nao");
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [currentUser]);
+
   return (
     <>
-      <Navbar bg="primary" variant="dark">
-        <Container>
-          <Navbar.Brand href="nao" path="/">
-            Générateur de cartes
-          </Navbar.Brand>
-          <Nav className="justify-content-end flex-grow-1 pe-3">
-            <Nav.Link href="nao">Nao</Nav.Link>
-            <Nav.Link href="groups">Groupes</Nav.Link>
-            <Nav.Link href="#cards">Cartes</Nav.Link>
-            <Nav.Link href="login" path="/login">
-              Se connecter
-            </Nav.Link>
-          </Nav>
-        </Container>
-      </Navbar>
+      <MyNavbar />
 
       <div className="mainlogin">
         <div className="loginContainer">

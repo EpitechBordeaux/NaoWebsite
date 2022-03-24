@@ -70,14 +70,16 @@ router.post("/addUser", (req, res) => {
   const users = {
     userId: req.body.userId,
     organizationId: req.body.organizationId,
+    organizationName: req.body.organizationName,
   };
   const sqlInsert =
-    "INSERT INTO usersOrganizations (userId, organizationId) VALUES (" +
+    "INSERT INTO usersOrganizations (userId, organizationId, organizationName) VALUES (" +
     users.userId +
     ", " +
     users.organizationId +
-    ")";
-  console.log(search_query_id);
+    ", '" +
+    users.organizationName +
+    "')";
   console.log(sqlInsert);
   db.query(search_query_id, async (err, result) => {
     if (err) throw err;
@@ -98,10 +100,22 @@ router.post("/addUser", (req, res) => {
   });
 });
 
+router.get("/userOrganisation/:id", (req, res) => {
+  const id = req.params.id;
+  const sqlSearch_userId = `SELECT * FROM usersOrganizations WHERE userId = ?`;
+  const search_query_id = db.format(sqlSearch_userId, [id]);
+
+  db.query(search_query_id, (error, result) => {
+    if (error) throw error;
+    res.send(result);
+  });
+});
+
 router.get("/getUser/:id", (request, res) => {
   const id = request.params.id;
   const sqlSearch_userId = `SELECT * FROM usersOrganizations WHERE organizationId = ?`;
   const search_query_id = db.format(sqlSearch_userId, [id]);
+
   db.query(search_query_id, (error, result) => {
     if (error) throw error;
     res.send(result);
@@ -125,7 +139,6 @@ router.delete("/delete/user/", (req, res) => {
     users.organizationId +
     "'";
 
-  console.log(select);
   db.query(search_query_id, async (err, result) => {
     if (err) throw err;
     if (result.length != 0) {

@@ -13,6 +13,17 @@ router.get("/signin", (request, response) => {
   });
 });
 
+router.get("/:name", (req, response) => {
+  const name = req.params.name;
+  const sqlSearch_userId = "Select * from users where username = ?";
+  const search_query_id = db.format(sqlSearch_userId, [name]);
+
+  db.query(search_query_id, (error, result) => {
+    if (error) throw error;
+    response.send(result);
+  });
+});
+
 router.post("/login", async (req, res) => {
   const user = req.body.username;
   const password = req.body.password;
@@ -28,7 +39,7 @@ router.post("/login", async (req, res) => {
       const hashedPassword = result[0].password;
       if (await bcryptjs.compare(password, hashedPassword)) {
         console.log("---------> Login Successful");
-        res.send(`${user} is logged in!`);
+        res.send({ userName: user });
       } else {
         console.log("---------> Password Incorrect");
         res.send("Password incorrect!");

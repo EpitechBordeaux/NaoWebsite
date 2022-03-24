@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../../images/nao_logo.jpg";
 import { useNavigate } from "react-router-dom";
-import { Navbar, Container, Nav } from "react-bootstrap";
 import "./signin.css";
+import MyNavbar from "../Navbar/navbar";
 
 function SignIn() {
   const [email, setEmail] = useState("");
@@ -35,21 +34,8 @@ function SignIn() {
 
   return (
     <>
-      <Navbar bg="primary" variant="dark">
-        <Container>
-          <Navbar.Brand href="nao" path="/">
-            Générateur de cartes
-          </Navbar.Brand>
-          <Nav className="justify-content-end flex-grow-1 pe-3">
-            <Nav.Link href="nao">Nao</Nav.Link>
-            <Nav.Link href="#groups">Groupes</Nav.Link>
-            <Nav.Link href="#cards">Cartes</Nav.Link>
-            <Nav.Link href="login" path="/login">
-              Se connecter
-            </Nav.Link>
-          </Nav>
-        </Container>
-      </Navbar>
+      <MyNavbar />
+
       <div className="mainlogin">
         <div className="loginContainer">
           <div className="rightSide">
