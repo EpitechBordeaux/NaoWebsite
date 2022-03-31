@@ -5,7 +5,12 @@ const db = require("../dbConnection");
 router.get("/", (req, res) => {
   db.query(`SELECT * FROM organizations`, (error, result) => {
     if (error) throw error;
-    res.send(result);
+    if (result.length === 0) {
+      console.log("------> No organization exists");
+      res.status(203).json({ result: "No organization exists" });
+    } else {
+      res.status(201).json({ result: result });
+    }
   });
 });
 
@@ -16,7 +21,13 @@ router.get("/:name", (req, res) => {
 
   db.query(search_query_id, (error, result) => {
     if (error) throw error;
-    res.send(result);
+    console.log(result.length);
+    if (result.length == 0) {
+      console.log("------> Orga dosn't exist");
+      res.status(404).json({ error: "Orga dosn't exists" });
+    } else {
+      res.status(201).json({ result: result });
+    }
   });
 });
 
@@ -28,18 +39,16 @@ router.post("/addOrganization", (req, res) => {
   ]);
   const users = {
     organizationName: req.body.organizationName,
-    tableName: req.body.tableName,
   };
   const sqlInsert =
     "INSERT INTO `organizations` (id, organizationName) VALUES (null, '" +
     users.organizationName +
     "')";
 
-  console.log(sqlInsert);
   db.query(search_query_name, async (err, result) => {
     if (err) throw err;
     if (result.length != 0) {
-      console.log("------> Orga already exist");
+      console.log("------> Orga already exists");
       res.status(409).json({ error: "Orga already exists" });
     } else {
       db.query(sqlInsert, (err, result) => {
@@ -49,7 +58,9 @@ router.post("/addOrganization", (req, res) => {
           res.status(500).json({ error: "Error creating Orga" });
         } else {
           console.log("--------> Created new Orga");
-          return res.send({ organizationName: users.organizationName });
+          return res
+            .status(201)
+            .json({ organizationName: users.organizationName });
         }
       });
     }
@@ -75,7 +86,7 @@ router.post("/addUser", (req, res) => {
     ", '" +
     users.organizationName +
     "')";
-  console.log(sqlInsert);
+
   db.query(search_query_id, async (err, result) => {
     if (err) throw err;
     if (result.length != 0) {
@@ -88,7 +99,7 @@ router.post("/addUser", (req, res) => {
           res.status(500).json({});
         } else {
           console.log("--------> Created new User");
-          res.status(201).json({});
+          res.status(201).json({ result: "Created new User" });
         }
       });
     }
@@ -97,12 +108,28 @@ router.post("/addUser", (req, res) => {
 
 router.get("/userOrganisation/:id", (req, res) => {
   const id = req.params.id;
+  const sqlSearch_id = `SELECT * FROM users WHERE id = ?`;
+  const search_query_id = db.format(sqlSearch_id, [id]);
   const sqlSearch_userId = `SELECT * FROM usersOrganizations WHERE userId = ?`;
-  const search_query_id = db.format(sqlSearch_userId, [id]);
+  const search_query_userId = db.format(sqlSearch_userId, [id]);
 
   db.query(search_query_id, (error, result) => {
     if (error) throw error;
-    res.send(result);
+    if (result.length === 0) {
+      console.log("------> User dosn't exist");
+      res.status(404).json({ error: "User dosn't exist" });
+    } else {
+      db.query(search_query_userId, (error, result) => {
+        if (result.length === 0) {
+          console.log("------> User dosn't have access to any organization");
+          res
+            .status(203)
+            .json({ result: "User dosn't have access to any organization" });
+        } else {
+          res.status(201).json({ result: result });
+        }
+      });
+    }
   });
 });
 
@@ -110,10 +137,26 @@ router.get("/getUser/:id", (request, res) => {
   const id = request.params.id;
   const sqlSearch_userId = `SELECT * FROM usersOrganizations WHERE organizationId = ?`;
   const search_query_id = db.format(sqlSearch_userId, [id]);
+  const sqlSearch_organizationId = `SELECT * FROM organizations WHERE id = ?`;
+  const search_query_organizationId = db.format(sqlSearch_organizationId, [id]);
 
-  db.query(search_query_id, (error, result) => {
+  db.query(search_query_organizationId, (error, result) => {
     if (error) throw error;
-    res.send(result);
+    if (result.length === 0) {
+      console.log("------> Organization dosn't exist");
+      res.status(404).json({ error: "Organization dosn't exist" });
+    } else {
+      db.query(search_query_id, (error, result) => {
+        if (result.length === 0) {
+          console.log("------> Organization dosn't contain any user");
+          res
+            .status(203)
+            .json({ result: "Organization dosn't contain any user" });
+        } else {
+          res.status(201).json({ result: result });
+        }
+      });
+    }
   });
 });
 
@@ -140,29 +183,43 @@ router.delete("/delete/user/", (req, res) => {
       db.query(select, (err, result) => {
         if (err) {
           console.log("Error deleted User");
-          res.status(500).json({});
+          res.status(500).json({ error: "Error deleted User" });
         } else {
           console.log("--------> Deleted User");
-          res.status(201).json({});
+          res.status(201).json({ result: "Deleted User" });
         }
       });
     } else {
       console.log("------> User dosn't exists");
-      res.status(409).json({ error: "User dosn't exists" });
+      res.status(404).json({ error: "User dosn't exists" });
     }
   });
 });
 
-// router.delete("/delete/:name", (request, res) => {
-//   const name = request.params.name;
-//   const select =
-//     "DELETE FROM `organizations` WHERE organizationName = '" + name + "'";
-//   //SELECT u_name AS user_name FROM users WHERE u_name = 'john';
+router.delete("/delete/:name", (request, res) => {
+  const name = request.params.name;
+  const sqlSearch_organization =
+    `SELECT * FROM organizations WHERE organizationName = '` + name + "'";
+  const select =
+    "DELETE FROM `organizations` WHERE organizationName = '" + name + "'";
 
-//   db.query(select, (error, result) => {
-//     if (error) throw error;
-//     res.send(result);
-//   });
-// });
+  db.query(sqlSearch_organization, (error, result) => {
+    if (error) throw error;
+    if (result.length === 0) {
+      console.log("Organization dosn't exists");
+      res.status(404).json({ error: "Organization dosn't exists" });
+    } else {
+      db.query(select, (error, result) => {
+        if (error) throw error;
+        if (result.length === 0) {
+          console.log("Error deleted Orga");
+          res.status(500).json({ error: "Error deleted Orga" });
+        } else {
+          res.status(201).json({ result: "Deleted organization" });
+        }
+      });
+    }
+  });
+});
 
 module.exports = router;

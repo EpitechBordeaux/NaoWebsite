@@ -43,7 +43,7 @@ function Login() {
           return response.json();
         })
         .then((data) => {
-          context.setUserId(data[0].id);
+          context.setUserId(data.result[0].id);
           navigate("/nao");
         })
         .catch((err) => console.error(err));

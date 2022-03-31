@@ -1,3 +1,6 @@
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("./swagger_output.json");
+
 const express = require("express");
 const dotenv = require("dotenv");
 var bodyParser = require("body-parser");
@@ -10,6 +13,8 @@ const userCards = require("./routes/cards");
 const userGroups = require("./routes/groups");
 const userOrganizations = require("./routes/organizations");
 const cors = require("cors");
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use(
   cors({

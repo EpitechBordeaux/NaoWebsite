@@ -16,6 +16,7 @@ function Organizations() {
 
   const getAllOrganization = (event) => {
     event.preventDefault();
+    console.log(context.userId);
     fetch(
       "http://localhost:5001/organizations/userOrganisation/" + context.userId,
       {
@@ -27,7 +28,8 @@ function Organizations() {
         return response.json();
       })
       .then((data) => {
-        setOrganisations(data);
+        console.log(data);
+        setOrganisations(data.result);
       })
       .catch((err) => console.error(err));
   };
@@ -69,7 +71,6 @@ function Organizations() {
   };
 
   const findOrganizationId = (name) => {
-    console.log("http://localhost:5001/organizations/" + name);
     fetch("http://localhost:5001/organizations/" + name, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -103,6 +104,7 @@ function Organizations() {
       .catch((err) => console.error(err));
   };
 
+  if (organisations) console.log(organisations);
   return (
     <>
       <MyNavbar />

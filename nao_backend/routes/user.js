@@ -4,25 +4,33 @@ const router = express.Router();
 const db = require("../dbConnection");
 const bcryptjs = require("bcrypt");
 
-router.post("/signin", userController.signIn);
-
-router.get("/signin", (request, response) => {
+router.get("/signin", (req, res) => {
   db.query("SELECT * FROM users", (error, result) => {
     if (error) throw error;
-    response.send(result);
+    if (result.length === 0) {
+      res.status(404).json({ result: "No user exists" });
+    } else {
+      res.status(201).json({ result });
+    }
   });
 });
 
-router.get("/:name", (req, response) => {
+router.get("/:name", (req, res) => {
   const name = req.params.name;
   const sqlSearch_userId = "Select * from users where username = ?";
   const search_query_id = db.format(sqlSearch_userId, [name]);
 
   db.query(search_query_id, (error, result) => {
     if (error) throw error;
-    response.send(result);
+    if (result.length === 0) {
+      res.status(404).json({ result: "User does not exist" });
+    } else {
+      res.status(201).json({ result });
+    }
   });
 });
+
+router.post("/signin", userController.signIn);
 
 router.post("/login", async (req, res) => {
   const user = req.body.username;
@@ -34,15 +42,15 @@ router.post("/login", async (req, res) => {
     if (err) throw err;
     if (result.length == 0) {
       console.log("--------> User does not exist");
-      res.sendStatus(404);
+      res.status(409).json({ error: "User does not exist" });
     } else {
       const hashedPassword = result[0].password;
       if (await bcryptjs.compare(password, hashedPassword)) {
         console.log("---------> Login Successful");
-        res.send({ userName: user });
+        res.status(201).json({ userName: user });
       } else {
-        console.log("---------> Password Incorrect");
-        res.send("Password incorrect!");
+        console.log("---------> Error");
+        res.status(500).json({ error: "Error" });
       }
     }
   });
